@@ -22,22 +22,16 @@ void set_color(COLOR color)
     switch (color)
     {
         case RED:
-            Serial.println("RED");
             TrafficLight.setPixelColor(RED, TrafficLight.Color(255, 0, 0));
             break;
         case YELLOW:
-            Serial.println("YELLOW");
             TrafficLight.setPixelColor(YELLOW, TrafficLight.Color(255, 180, 0));
             break;
         case GREEN:  
-            Serial.println("GREEN");
             TrafficLight.setPixelColor(GREEN, TrafficLight.Color(0, 255, 0));
             break;
         default:
-        {
-            Serial.println("CLEAR");
             break;
-        }
     }
     TrafficLight.show();
 }
@@ -56,13 +50,13 @@ void setup()
         set_color(RED);
         delay(100);
         set_color(CLEAR);
-        delay(500);
+        delay(100);
     }
 
     Serial.println(WiFi.localIP());
     TrafficLight.fill(TrafficLight.Color(0, 255, 0), 0, 3);
     TrafficLight.show();
-    delay(5000);
+    delay(3000);
     TrafficLight.clear();
     TrafficLight.show();
 
@@ -77,9 +71,32 @@ void loop()
         int n =  Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
         packetBuffer[n] = 0;
         Serial.println(packetBuffer);
-        if (packetBuffer[0] == 49)
+        int command = int(packetBuffer[0] - '0');
+        switch (command)
         {
-            //green_on();
+            case 0:
+            {
+                // отправить свой ip в броадкаст
+                break;
+            }
+            case 1:
+            {
+                set_color(RED);
+                break;
+            }
+            case 2:
+            {
+                set_color(YELLOW);
+                break;
+            }
+            case 3:
+            {
+                set_color(GREEN);
+                break;
+            }
+            default:
+                set_color(CLEAR);
+                break;    
         }
     }
 }
